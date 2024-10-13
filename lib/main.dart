@@ -1,125 +1,153 @@
 import 'package:flutter/material.dart';
 
+// Import the Flutter Material library
 void main() {
+  // Define the main function as the entry point for the application
   runApp(const MyApp());
+  // Run the app with the MyApp widget as the root widget
 }
 
 class MyApp extends StatelessWidget {
+// Create a StatelessWidget class named MyApp
   const MyApp({super.key});
+  // Define a constructor for MyApp
 
-  // This widget is the root of your application.
   @override
+  // Override the build method to define the widget tree
   Widget build(BuildContext context) {
+    // This widget sets the title and theme for the entire app
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Grade Calculator', // Set the title of the app
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        // Define the theme for the app
+        // Here, we set the primarySwatch to pink
+        primarySwatch: Colors.pink,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+      home: const HomeScreen(),
+      // Set the home property to specify the initial screen of the app
+    ); // Use the HomeScreen as the initial screen
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class HomeScreen extends StatefulWidget {
+  // Create a StatefulWidget class named HomeScreen
+  const HomeScreen({super.key});
+  // Define a constructor for HomeScreen
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
+  State<HomeScreen> createState() => HomeScreenState();
+} // Override the createState method to create a State object
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class HomeScreenState extends State<HomeScreen> {
+  // Create a State class named HomeScreenState that manages the state of the HomeScreen widget
+  final TextEditingController scoreController = TextEditingController();
+  // Create a TextEditingController to manage the text input field
+  String result =
+      ''; // Define a String variable to store the calculated grade result
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  @override
+  void dispose() {
+    scoreController.dispose(); // Dispose of the controller
+    super.dispose();
+  } // Dispose of the TextEditingController when the widget is no longer used
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
+      // Return a Scaffold widget as the root of the UI
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text(
+          // title: const Text('Grade Calculator'),
+
+          'Grade Calculator',
+          style: TextStyle(
+            color: Colors.white, // Set text color to white
+          ),
+        ),
+        centerTitle: true, // Center the title
+        backgroundColor: Colors.pink, // Set background color to pink
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              TextField(
+                controller: scoreController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: 'Type your score',
+                  prefixIcon: const Icon(Icons.percent),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: calculateGrade,
+                child: const Text('Calculate',
+                    style: TextStyle(color: Colors.white)),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.pink),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      side: BorderSide(
+                        color: Colors.pink,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              Text(
+                result,
+                style: const TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void calculateGrade() {
+    if (scoreController.text.isNotEmpty) {
+      final scoreText = scoreController.text;
+      if (double.tryParse(scoreText) != null) {
+        final score = double.parse(scoreText);
+        setState(() {
+          result = getGrade(score);
+        });
+      } else {
+        setState(() {
+          result = 'Invalid Input';
+        });
+      }
+    } else {
+      setState(() {
+        result = 'Please enter a score';
+      });
+    }
+  }
+
+  String getGrade(double score) {
+    if (score >= 90) {
+      return 'A';
+    } else if (score >= 80) {
+      return 'B';
+    } else if (score >= 70) {
+      return 'C';
+    } else if (score >= 60) {
+      return 'D';
+    } else {
+      return 'F';
+    }
   }
 }
